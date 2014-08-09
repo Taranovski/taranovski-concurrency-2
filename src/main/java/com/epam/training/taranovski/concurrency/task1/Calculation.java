@@ -8,6 +8,9 @@ package com.epam.training.taranovski.concurrency.task1;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,32 +64,31 @@ public class Calculation {
     public double execute() {
 
         List<Callable<Double>> callableList = new ArrayList<>();
-        List<Future<Double>> futureList;
+        List<Future<Double>> futureList = null;
 
         ExecutorService service = Executors.newFixedThreadPool(threadCount);
-        service.
-        
-        
+
         double temp = 0;
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < threadCount; i++) {
-            array[i] = new CalculationPart(function, start + temp, end, tempStep);
+            callableList.add(new CalculationPart(function, start + temp, end, tempStep));
             temp += step;
-            array[i].start();
         }
 
         try {
-            for (int i = 0; i < threadCount; i++) {
-                array[i].join();
-            }
+            futureList = service.invokeAll(callableList);
         } catch (InterruptedException ex) {
             Logger.getLogger(Calculation.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        for (int i = 0; i < threadCount; i++) {
-            result += array[i].getResult();
+        try {
+            for (int i = 0; i < threadCount; i++) {
+                result += futureList.get(i).get();
+            }
+        } catch (InterruptedException | ExecutionException ex) {
+            Logger.getLogger(Calculation.class.getName()).log(Level.SEVERE, null, ex);
         }
+        service.shutdown();
 
         executionTime = System.currentTimeMillis() - startTime;
         return result;

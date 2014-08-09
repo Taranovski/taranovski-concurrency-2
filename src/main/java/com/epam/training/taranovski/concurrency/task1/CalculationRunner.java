@@ -34,7 +34,7 @@ public class CalculationRunner {
                 calc = new Calculation(function, number, i);
                 result = calc.execute();
                 mediumSumm += calc.getExecutionTime();
-                System.out.println(result);
+                //System.out.println(result);
             }
             mediumTime = mediumSumm / repeatNumber;
 
