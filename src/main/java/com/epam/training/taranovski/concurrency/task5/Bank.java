@@ -6,10 +6,12 @@
 
 package com.epam.training.taranovski.concurrency.task5;
 
+import java.util.TreeMap;
+
 /**
  *
  * @author Alyx
  */
 public class Bank {
-    
+    TreeMap tm
 }
