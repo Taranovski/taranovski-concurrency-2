@@ -16,7 +16,7 @@ public class Runner {
      * @param args
      */
     public static void main(String[] args) {
-        MyCircleBuffer<Integer> buffer = new MyCircleBuffer<>(10);
+        MyCircleBuffer<Integer> buffer = new MyCircleBuffer<>(4);
         Consumer<Integer> consumer = new Consumer(buffer);
         Producer<Integer> producer = new Producer(buffer, new MyItemGenerator());
 
