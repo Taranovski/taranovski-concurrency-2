@@ -16,8 +16,49 @@ public class Bank {
 
     List<Account> accounts;
 
+    /**
+     *
+     * @param accountNumber1
+     * @param accountNumber2
+     * @param amount
+     */
     public void makeTransaction(int accountNumber1, int accountNumber2, BigDecimal amount) {
+        if (accountNumber1 == accountNumber2) {
+            return;
+        }
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException();
+        }
 
+        boolean success = false;
+
+        int first = accountNumber1;
+        int second = accountNumber2;
+
+        if (accountNumber1 > accountNumber2) {
+            first = accountNumber2;
+            second = accountNumber1;
+        }
+
+        while (!success) {
+            if (accounts.get(first).getLock().tryLock()) {
+                try {
+                    if (accounts.get(second).getLock().tryLock()) {
+                        try {
+                            if (checkAmount(accountNumber1, amount)) {
+                                accounts.get(accountNumber1).withdraw(amount);
+                                accounts.get(accountNumber2).deposit(amount);
+                                success = true;
+                            }
+                        } finally {
+                            accounts.get(second).getLock().unlock();
+                        }
+                    }
+                } finally {
+                    accounts.get(first).getLock().unlock();
+                }
+            }
+        }
     }
 
     /**
