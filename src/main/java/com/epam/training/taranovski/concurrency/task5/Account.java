@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import static java.math.BigDecimal.ZERO;
 
 /**
  *
@@ -16,7 +17,6 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Account {
 
-    private final static BigDecimal ZERO = new BigDecimal(0);
     private final int number;
     private BigDecimal currentSumm;
     private BigDecimal previousSumm;
@@ -85,7 +85,7 @@ public class Account {
 
     /**
      *
-     * @return 
+     * @return
      */
     public synchronized boolean commit() {
         previousSumm = currentSumm;
@@ -95,7 +95,7 @@ public class Account {
 
     /**
      *
-     * @return 
+     * @return
      */
     public synchronized boolean rollback() {
         currentSumm = previousSumm;
@@ -106,6 +106,5 @@ public class Account {
     public Lock getLock() {
         return lock;
     }
-    
-    
+
 }
