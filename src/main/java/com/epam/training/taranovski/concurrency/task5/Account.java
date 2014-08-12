@@ -19,6 +19,7 @@ public class Account {
     private final static BigDecimal ZERO = new BigDecimal(0);
     private final int number;
     private BigDecimal currentSumm;
+    private BigDecimal previousSumm;
     private BigDecimal tempSumm;
     private Lock lock = new ReentrantLock();
 
@@ -84,15 +85,27 @@ public class Account {
 
     /**
      *
+     * @return 
      */
-    public synchronized void commit() {
+    public synchronized boolean commit() {
+        previousSumm = currentSumm;
         currentSumm = tempSumm;
+        return true;
     }
 
     /**
      *
+     * @return 
      */
-    public synchronized void rollback() {
+    public synchronized boolean rollback() {
+        currentSumm = previousSumm;
         tempSumm = currentSumm;
+        return true;
     }
+
+    public Lock getLock() {
+        return lock;
+    }
+    
+    
 }
