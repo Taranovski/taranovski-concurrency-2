@@ -29,9 +29,9 @@ public class Consumer<T> implements Runnable {
     @Override
     public void run() {
         while (true) {
-            System.out.println("consumer " + this + "trying to get...");
+            //System.out.println("consumer " + this + "trying to get...");
             item = buffer.get();
-            System.out.println("got: " + item);
+            //System.out.println("got: " + item);
         }
     }
 

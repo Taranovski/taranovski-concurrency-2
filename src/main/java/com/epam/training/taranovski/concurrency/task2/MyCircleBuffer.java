@@ -22,9 +22,9 @@ public class MyCircleBuffer<T> {
     private volatile int currentWrite;
     private int size;
     private Object[] buffer;
-    private Lock[] locks;
-    private Condition[] readConditions;
-    private Condition[] writeConditions;
+    private final Lock lock;
+    private final Condition readCondition;
+    private final Condition writeCondition;
 
     /**
      *
@@ -35,15 +35,9 @@ public class MyCircleBuffer<T> {
         currentRead = 0;
         currentWrite = 0;
         buffer = new Object[size];
-        locks = new Lock[size];
-        readConditions = new Condition[size];
-        writeConditions = new Condition[size];
-        for (int i = 0; i < size; i++) {
-            locks[i] = new ReentrantLock();
-            readConditions[i] = locks[i].newCondition();
-            writeConditions[i] = locks[i].newCondition();
-        }
-
+        lock = new ReentrantLock();
+        readCondition = lock.newCondition();
+        writeCondition = lock.newCondition();
     }
 
     /**
@@ -54,22 +48,28 @@ public class MyCircleBuffer<T> {
         if (item == null) {
             throw new RuntimeException("cannot put a null into a buffer");
         }
-        int toLock = currentWrite;
-        locks[toLock].lock();
-        try {
-            while (buffer[currentWrite] != null) {
+        while (true) {
+            if (lock.tryLock()) {
                 try {
-                    writeConditions[toLock].await();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MyCircleBuffer.class.getName()).log(Level.SEVERE, null, ex);
+                    while (buffer[currentWrite] != null) {
+                        try {
+                            
+                            
+                            writeCondition.await();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(MyCircleBuffer.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    buffer[currentWrite] = item;
+                    currentWrite = (currentWrite + 1) % size;
+                    readCondition.signalAll();
+                    return;
+                } finally {
+                    lock.unlock();
                 }
             }
-            buffer[currentWrite] = item;
-            currentWrite = (currentWrite + 1) % size;
-            readConditions[toLock].signalAll();
-        } finally {
-            locks[toLock].unlock();
         }
+
     }
 
     /**
@@ -77,23 +77,26 @@ public class MyCircleBuffer<T> {
      * @return
      */
     public T get() {
-        int toLock = currentRead;
-        locks[toLock].lock();
-        try {
-            while (buffer[currentRead] == null) {
+        while (true) {
+            if (lock.tryLock()) {
                 try {
-                    readConditions[toLock].await();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MyCircleBuffer.class.getName()).log(Level.SEVERE, null, ex);
+                    while (buffer[currentRead] == null) {
+                        try {
+                            readCondition.await();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(MyCircleBuffer.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    T item = (T) buffer[currentRead];
+                    buffer[currentRead] = null;
+                    currentRead = (currentRead + 1) % size;
+                    writeCondition.signalAll();
+                    return item;
+                } finally {
+                    lock.unlock();
                 }
             }
-            T item = (T) buffer[currentRead];
-            buffer[currentRead] = null;
-            currentRead = (currentRead + 1) % size;
-            writeConditions[toLock].signalAll();
-            return item;
-        } finally {
-            locks[toLock].unlock();
         }
+
     }
 }

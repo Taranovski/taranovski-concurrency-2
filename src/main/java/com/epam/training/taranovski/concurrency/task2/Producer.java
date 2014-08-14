@@ -32,11 +32,11 @@ public class Producer<T> implements Runnable {
     @Override
     public void run() {
         while (true) {
-            System.out.println("produser " + this + "trying to put...");
+            //System.out.println("produser " + this + "trying to put...");
             item = generator.generate();
 
             buffer.put(item);
-            System.out.println("put: " + item);
+            //System.out.println("put: " + item);
         }
     }
 
