@@ -6,7 +6,9 @@
 package com.epam.training.taranovski.concurrency.task5;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -14,7 +16,40 @@ import java.util.List;
  */
 public class Bank {
 
-    List<Account> accounts;
+    private static final int DEFAULT_SUMM = 10000;
+    private static final BigDecimal DEFAULT_ACCOUNT_SUMM = new BigDecimal(DEFAULT_SUMM).setScale(2);
+    private List<Account> accounts;
+    private volatile int transactionCount = 0;
+
+    /**
+     *
+     *
+     * @param accounts
+     */
+    public Bank(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    /**
+     *
+     * @param accountNumber
+     */
+    public Bank(int accountNumber) {
+        generateAccounts(accountNumber, DEFAULT_ACCOUNT_SUMM);
+    }
+
+    /**
+     *
+     * @param count
+     * @param startMoney
+     */
+    private void generateAccounts(int count, BigDecimal startMoney) {
+        accounts = new ArrayList<>(count);
+        Random random = new Random();
+        for (int i = 0; i < count; i++) {
+            accounts.add(new Account(random.nextInt(), startMoney));
+        }
+    }
 
     /**
      *
@@ -59,6 +94,7 @@ public class Bank {
                 }
             }
         }
+        transactionCount++;
     }
 
     /**
@@ -93,5 +129,30 @@ public class Bank {
             summ = summ.add(account.getSumm());
         }
         return summ;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getBankSize() {
+        return accounts.size();
+    }
+
+    /**
+     *
+     * @param number
+     * @return
+     */
+    public Account getAccountFromBank(int number) {
+        return accounts.get(number);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getTransactionCount() {
+        return transactionCount;
     }
 }

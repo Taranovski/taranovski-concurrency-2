@@ -23,12 +23,12 @@ public class Runner {
         
         new Thread(producer).start();
         new Thread(consumer).start();
-        new Thread(producer).start();
-        new Thread(consumer).start();
-        new Thread(producer).start();
-        new Thread(consumer).start();
-        new Thread(producer).start();
-        new Thread(consumer).start();
+//        new Thread(producer).start();
+//        new Thread(consumer).start();
+//        new Thread(producer).start();
+//        new Thread(consumer).start();
+//        new Thread(producer).start();
+//        new Thread(consumer).start();
     }
 
 }

@@ -6,7 +6,6 @@
 package com.epam.training.taranovski.concurrency.task5;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Random;
 
@@ -19,8 +18,8 @@ public class BankOperator implements Runnable {
     private final static int MAX_AMOUNT = 1000;
     private Bank bank;
     private Random random = new Random();
-    private int account1;
-    private int account2;
+    private int account1Number;
+    private int account2Number;
     private BigDecimal amount;
 
     /**
@@ -36,13 +35,11 @@ public class BankOperator implements Runnable {
      *
      */
     private void generateTransaction() {
-        
-        
-        
-        amount = new BigDecimal(MAX_AMOUNT * random.nextDouble());
-        System.out.println(amount);
-        amount.setScale(2, RoundingMode.DOWN);
-        System.out.println(amount);
+        amount = new BigDecimal(0.01 + (MAX_AMOUNT - 0.01) * random.nextDouble()).setScale(2, RoundingMode.DOWN);
+        //System.out.println(amount);
+        account1Number = random.nextInt(bank.getBankSize());
+        account2Number = random.nextInt(bank.getBankSize());
+        bank.makeTransaction(account1Number, account2Number, amount);
     }
 
     /**
@@ -50,7 +47,9 @@ public class BankOperator implements Runnable {
      */
     @Override
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        while (true) {
+            generateTransaction();
+        }
     }
 
 }
