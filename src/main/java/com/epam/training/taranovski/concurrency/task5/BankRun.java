@@ -22,7 +22,7 @@ public class BankRun {
         Bank bank = new Bank(10000);
         System.out.println("bank money: " + bank.getAllSumm() + " transaction count: " + bank.getTransactionCount());
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             new Thread(new BankOperator(bank)).start();
         }
 
