@@ -5,6 +5,10 @@
  */
 package com.epam.training.taranovski.concurrency.task4;
 
+import java.math.BigInteger;
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  *
  * @author Alyx
@@ -13,6 +17,7 @@ public class Operator extends Thread {
 
     private MyBigInt myBigInt;
     private boolean running = true;
+    private Set<BigInteger> treeSet;
 
     /**
      *
@@ -20,6 +25,7 @@ public class Operator extends Thread {
      */
     public Operator(MyBigInt myBigInt) {
         this.myBigInt = myBigInt;
+        treeSet = new TreeSet<>();
     }
 
     /**
@@ -27,8 +33,11 @@ public class Operator extends Thread {
      */
     @Override
     public void run() {
+        BigInteger bigInt = null;
         while (running) {
-            System.out.println(myBigInt.next());
+            bigInt = myBigInt.next();
+            treeSet.add(bigInt);
+            //System.out.println(bigInt);
         }
     }
 
@@ -37,6 +46,14 @@ public class Operator extends Thread {
      */
     public void stopRunning() {
         running = false;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Set<BigInteger> getSet() {
+        return treeSet;
     }
 
 }
