@@ -25,8 +25,6 @@ public class ConnectionPoolRunner {
         MyConnectionPool pool = new MyConnectionPool("jdbc:h2:~/test", "sa", "");
         ConnectionPoolReturnDaemon daemon = new ConnectionPoolReturnDaemon(pool);
 
-        daemon.start();
-
         System.out.println("pool active: " + pool.activeConnections());
         System.out.println("pool max: " + pool.maxConnections());
 
@@ -64,16 +62,15 @@ public class ConnectionPoolRunner {
         System.out.println("pool active: " + pool.activeConnections());
         System.out.println("pool max: " + pool.maxConnections());
         Connection con3 = pool.checkout();
-        
+
         Thread.sleep(1000);
         System.out.println("pool active: " + pool.activeConnections());
         System.out.println("pool max: " + pool.maxConnections());
         pool.checkin(con3);
-        
+
         System.out.println("pool active: " + pool.activeConnections());
         System.out.println("pool max: " + pool.maxConnections());
-        
-        daemon.stopDaemon();
+
     }
 
 }

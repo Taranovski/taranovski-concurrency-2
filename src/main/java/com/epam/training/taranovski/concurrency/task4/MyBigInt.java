@@ -22,7 +22,10 @@ public class MyBigInt {
     }
 
     public BigInteger next() {
-        return bigInt.getAndSet(bigInt.get().multiply(TWO));
+        BigInteger init = bigInt.get();
+        BigInteger fin = bigInt.get().multiply(TWO);
+        bigInt.compareAndSet(init, fin);
+        return fin;
     }
 
 }

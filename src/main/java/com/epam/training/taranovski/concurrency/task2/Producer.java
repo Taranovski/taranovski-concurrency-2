@@ -15,6 +15,7 @@ public class Producer<T> implements Runnable {
     private final MyCircleBuffer<T> buffer;
     private T item;
     private final MyItemGenerator<T> generator;
+    private volatile boolean running = true;
 
     /**
      *
@@ -31,7 +32,7 @@ public class Producer<T> implements Runnable {
      */
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             //System.out.println("produser " + this + "trying to put...");
             item = generator.generate();
 

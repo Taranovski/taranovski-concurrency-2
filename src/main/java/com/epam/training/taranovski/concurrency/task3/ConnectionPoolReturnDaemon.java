@@ -24,7 +24,8 @@ public class ConnectionPoolReturnDaemon extends Thread {
     private long time;
     private static final int IDLE_TIMEOUT = 10000;
     private static final int CHECK_INTERVAL = 1000;
-    private boolean running = true;
+
+    private Connection currentConnection;
 
     /**
      *
@@ -34,15 +35,18 @@ public class ConnectionPoolReturnDaemon extends Thread {
         this.myConnectionPool = myConnectionPool;
         semaphore = myConnectionPool.getSemaphore();
         map = myConnectionPool.getConnectionMap();
+        this.setDaemon(true);
+        this.start();
     }
 
+    /**
+     *
+     */
     @Override
     public void run() {
-        Connection currentConnection;
-        while (running) {
+        while (true) {
             time = System.currentTimeMillis();
             map = myConnectionPool.getConnectionMap();
-            
             //System.out.println("111");
             for (Map.Entry<Connection, Long> entry : map.entrySet()) {
                 currentConnection = entry.getKey();
@@ -62,14 +66,6 @@ public class ConnectionPoolReturnDaemon extends Thread {
             } catch (InterruptedException ex) {
                 Logger.getLogger(ConnectionPoolReturnDaemon.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
-    }
-
-    /**
-     *
-     */
-    public void stopDaemon() {
-        running = false;
     }
 }

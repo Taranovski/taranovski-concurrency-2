@@ -13,7 +13,8 @@ package com.epam.training.taranovski.concurrency.task2;
 public class Consumer<T> implements Runnable {
 
     private final MyCircleBuffer<T> buffer;
-    T item;
+    private T item;
+    private volatile boolean running = true;
 
     /**
      *
@@ -28,7 +29,7 @@ public class Consumer<T> implements Runnable {
      */
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             //System.out.println("consumer " + this + "trying to get...");
             item = buffer.get();
             //System.out.println("got: " + item);

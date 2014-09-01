@@ -84,6 +84,7 @@ public class Bank {
                                 accounts.get(accountNumber1).withdraw(amount);
                                 accounts.get(accountNumber2).deposit(amount);
                                 success = true;
+                                transactionCount++;
                             }
                         } finally {
                             accounts.get(second).getLock().unlock();
@@ -94,7 +95,6 @@ public class Bank {
                 }
             }
         }
-        transactionCount++;
     }
 
     /**
