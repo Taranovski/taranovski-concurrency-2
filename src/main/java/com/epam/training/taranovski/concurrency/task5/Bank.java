@@ -80,7 +80,7 @@ public class Bank {
                         if (checkAmount(accountNumber1, amount)) {
                             accounts.get(accountNumber1).withdraw(amount);
                             accounts.get(accountNumber2).deposit(amount);
-                            transactionCount++;
+                            transactionCount += 1;
                         }
                     } finally {
                         accounts.get(second).getLock().unlock();

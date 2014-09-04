@@ -6,6 +6,8 @@
 package com.epam.training.taranovski.concurrency.task4;
 
 import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,8 +18,8 @@ import java.util.TreeSet;
 public class Operator extends Thread {
 
     private MyBigInt myBigInt;
-    private boolean running = true;
-    private Set<BigInteger> treeSet;
+    private volatile boolean running = true;
+    private List<BigInteger> list;
 
     /**
      *
@@ -25,7 +27,7 @@ public class Operator extends Thread {
      */
     public Operator(MyBigInt myBigInt) {
         this.myBigInt = myBigInt;
-        treeSet = new TreeSet<>();
+        list = new LinkedList<>();
     }
 
     /**
@@ -36,7 +38,7 @@ public class Operator extends Thread {
         BigInteger bigInt = null;
         while (running) {
             bigInt = myBigInt.next();
-            treeSet.add(bigInt);
+            list.add(bigInt);
             //System.out.println(bigInt);
         }
     }
@@ -52,8 +54,8 @@ public class Operator extends Thread {
      *
      * @return
      */
-    public Set<BigInteger> getSet() {
-        return treeSet;
+    public List<BigInteger> getList() {
+        return list;
     }
 
 }

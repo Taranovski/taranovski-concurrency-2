@@ -7,6 +7,7 @@ package com.epam.training.taranovski.concurrency.task4;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class Runner {
         }
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(500);
         } catch (InterruptedException ex) {
             Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -52,26 +53,37 @@ public class Runner {
         for (Operator item : list) {
             item.stopRunning();
         }
-
-        Set<BigInteger> set = new TreeSet<>();
+        
         for (Operator item : list) {
-            set.addAll(item.getSet());
+            try {
+                item.join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         List<BigInteger> list1 = new LinkedList<>();
-
-        for (BigInteger number : set) {
-            list1.add(number);
+        for (Operator item : list) {
+            list1.addAll(item.getList());
         }
+
+        Collections.sort(list1);
 
         BigInteger int1 = null;
         BigInteger int2 = null;
         BigInteger two = new BigInteger("2");
+//        System.out.println(two.multiply(two).equals(two.multiply(two)));
+//        System.out.println(two.multiply(two).equals(two));
+//        System.out.println(new BigInteger("256").divide(two).equals(new BigInteger("128")));
+        System.out.println("size: " + list1.size());
         boolean allOk = true;
         for (int i = 1; i < list1.size(); i++) {
             int1 = list1.get(i - 1);
             int2 = list1.get(i);
             allOk = allOk & int2.divide(int1).equals(two);
+            if (!int2.divide(int1).equals(two)) {
+                System.out.println(i);
+            }
         }
         System.out.println("all ok: " + allOk);
 

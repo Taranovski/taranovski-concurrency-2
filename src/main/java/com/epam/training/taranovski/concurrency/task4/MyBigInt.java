@@ -23,8 +23,11 @@ public class MyBigInt {
 
     public BigInteger next() {
         BigInteger init = bigInt.get();
-        BigInteger fin = bigInt.get().multiply(TWO);
-        bigInt.compareAndSet(init, fin);
+        BigInteger fin = init.multiply(TWO);
+        while (!bigInt.compareAndSet(init, fin)) {
+            init = bigInt.get();
+            fin = init.multiply(TWO);
+        }
         return fin;
     }
 
