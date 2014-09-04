@@ -27,6 +27,7 @@ public class MyConnectionPool {
     private final JdbcConnectionPool connectionPool;
     private final Semaphore semaphore;
     private final Map<Connection, Long> connectionMap;
+    private final ConnectionPoolReturnDaemon daemon;
 
     /**
      *
@@ -40,6 +41,7 @@ public class MyConnectionPool {
         connectionPool.setMaxConnections(size);
         semaphore = new Semaphore(size);
         connectionMap = new ConcurrentHashMap<>(size);
+        daemon = new ConnectionPoolReturnDaemon(this);
     }
 
     /**

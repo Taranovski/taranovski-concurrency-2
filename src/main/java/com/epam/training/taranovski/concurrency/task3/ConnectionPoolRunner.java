@@ -23,8 +23,7 @@ public class ConnectionPoolRunner {
      */
     public static void main(String[] args) throws InterruptedException {
         MyConnectionPool pool = new MyConnectionPool("jdbc:h2:~/test", "sa", "");
-        ConnectionPoolReturnDaemon daemon = new ConnectionPoolReturnDaemon(pool);
-
+        
         System.out.println("pool active: " + pool.activeConnections());
         System.out.println("pool max: " + pool.maxConnections());
 

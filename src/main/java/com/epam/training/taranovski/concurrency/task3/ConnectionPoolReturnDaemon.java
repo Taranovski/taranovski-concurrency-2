@@ -47,7 +47,6 @@ public class ConnectionPoolReturnDaemon extends Thread {
         while (true) {
             time = System.currentTimeMillis();
             map = myConnectionPool.getConnectionMap();
-            //System.out.println("111");
             for (Map.Entry<Connection, Long> entry : map.entrySet()) {
                 currentConnection = entry.getKey();
                 if (time - entry.getValue() > IDLE_TIMEOUT) {
@@ -55,7 +54,6 @@ public class ConnectionPoolReturnDaemon extends Thread {
                         map.remove(entry.getKey());
                         semaphore.release();
                         currentConnection.close();
-                        //System.out.println("closed");
                     } catch (SQLException ex) {
                         Logger.getLogger(ConnectionPoolReturnDaemon.class.getName()).log(Level.SEVERE, null, ex);
                     }
