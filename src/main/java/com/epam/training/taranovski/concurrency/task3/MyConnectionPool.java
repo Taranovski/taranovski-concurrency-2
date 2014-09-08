@@ -13,7 +13,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.h2.jdbcx.JdbcConnectionPool;
 
 /**
  *
@@ -24,7 +23,7 @@ public class MyConnectionPool {
     private static final int DEFAULT_SIZE = 10;
     private static final int WAITING_TIMEOUT = 1000;
 
-    private final JdbcConnectionPool connectionPool;
+    private final MyMyConnectionPool connectionPool;
     private final Semaphore semaphore;
     private final Map<Connection, Long> connectionMap;
     private final ConnectionPoolReturnDaemon daemon;
@@ -33,25 +32,13 @@ public class MyConnectionPool {
      *
      * @param size
      * @param url
-     * @param user
-     * @param password
      */
-    public MyConnectionPool(int size, String url, String user, String password) {
-        connectionPool = JdbcConnectionPool.create(url, user, password);
-        connectionPool.setMaxConnections(size);
+    public MyConnectionPool(int size, String driver, String url) {
+        connectionPool = MyMyConnectionPool.getInstance(driver, url);
+        connectionPool.setSize(size);
         semaphore = new Semaphore(size);
         connectionMap = new ConcurrentHashMap<>(size);
         daemon = new ConnectionPoolReturnDaemon(this);
-    }
-
-    /**
-     *
-     * @param url
-     * @param user
-     * @param password
-     */
-    public MyConnectionPool(String url, String user, String password) {
-        this(DEFAULT_SIZE, url, user, password);
     }
 
     /**
@@ -61,11 +48,11 @@ public class MyConnectionPool {
     public Connection checkout() {
         try {
             if (getSemaphore().tryAcquire(WAITING_TIMEOUT, TimeUnit.MILLISECONDS)) {
-                Connection con = connectionPool.getConnection();
+                Connection con = MyConnectionInvocationHandler.createBuilderRobot(connectionPool.getConnection());
                 getConnectionMap().put(con, System.currentTimeMillis());
                 return con;
             }
-        } catch (InterruptedException | SQLException ex) {
+        } catch (InterruptedException ex) {
             Logger.getLogger(MyConnectionPool.class.getName()).log(Level.SEVERE, null, ex);
         }
         throw new RuntimeException("no connections available");
@@ -104,11 +91,11 @@ public class MyConnectionPool {
      * @return
      */
     public int activeConnections() {
-        return connectionPool.getActiveConnections();
+        return connectionPool.getCurrentPoolSize();
     }
 
     public int maxConnections() {
-        return connectionPool.getMaxConnections();
+        return connectionPool.getMaxPoolSize();
     }
-    
+
 }

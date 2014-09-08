@@ -22,7 +22,7 @@ public class ConnectionPoolRunner {
      * @throws java.lang.InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
-        MyConnectionPool pool = new MyConnectionPool("jdbc:h2:~/test", "sa", "");
+        MyConnectionPool pool = new MyConnectionPool(10, "org.h2.Driver", "jdbc:h2:~/test;USER=sa;PASSWORD=");
         
         System.out.println("pool active: " + pool.activeConnections());
         System.out.println("pool max: " + pool.maxConnections());
